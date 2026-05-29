@@ -1,4 +1,4 @@
-package com.zongkx;
+package io.github.zongkx;
 
 import io.xjar.XCryptos;
 import io.xjar.XEncryption;

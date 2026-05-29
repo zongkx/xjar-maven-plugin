@@ -1,0 +1,35 @@
+name: Publish to Sonatype Central
+
+on:
+  release:
+    types: [published] # 当你在 GitHub 发布 Release 时触发
+  # workflow_dispatch: # 允许手动触发（方便测试）
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # 核心步骤：将 GitHub Secret 中的私钥导入到 Runner 的 GPG 环境中
+      - name: Import GPG Key
+        uses: samuelmeuli/action-gpg@v3
+        with:
+          gpg_private_key: ${{ secrets::GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+      # 执行部署命令
+      - name: Publish to Maven Central
+        run: |
+          mvn clean deploy -B \
+            -Dsonatype.username=${{ secrets.SONATYPE_USERNAME }} \
+            -Dsonatype.password=${{ secrets.SONATYPE_PASSWORD }} \
+            -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
