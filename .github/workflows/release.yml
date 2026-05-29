@@ -23,7 +23,7 @@ jobs:
       - name: Import GPG Key
         uses: samuelmeuli/action-gpg@v3
         with:
-          gpg_private_key: ${{ secrets:GPG_PRIVATE_KEY }}
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
       # 执行部署命令
