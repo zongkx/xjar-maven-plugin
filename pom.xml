@@ -13,6 +13,25 @@
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.release>17</maven.compiler.release>
     </properties>
+         <licenses>
+    <license>
+        <name>The Apache Software License, Version 2.0</name>
+        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+</licenses>
+
+<developers>
+    <developer>
+        <name>zongkx</name>
+        <email>your-email@example.com</email>
+    </developer>
+</developers>
+
+         <scm>
+             <connection>scm:git:git://github.com/zongkx/xjar-maven-plugin.git</connection>
+             <developerConnection>scm:git:ssh://github.com:zongkx/xjar-maven-plugin.git</developerConnection>
+             <url>https://github.com/zongkx/xjar-maven-plugin/tree/main</url>
+         </scm>
     <repositories>
         <repository>
             <id>jitpack.io</id>
@@ -69,13 +88,15 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.7.0</version>
-                <configuration>
-                    <publishingServerId>central</publishingServerId>
-                </configuration>
-            </plugin>
+                      <groupId>org.sonatype.central</groupId>
+                      <artifactId>central-publishing-maven-plugin</artifactId>
+                      <version>0.7.0</version>
+                      <extensions>true</extensions> <!-- 添加这一行 -->
+                      <configuration>
+                          <publishingServerId>central</publishingServerId>
+                          <autoPublish>true</autoPublish> <!-- 可选：成功后自动发布 -->
+                      </configuration>
+                  </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
