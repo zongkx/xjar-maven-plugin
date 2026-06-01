@@ -18,9 +18,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
+          # 🌟 关键优化 1：让行动自动在 settings.xml 中生成名为 central 的服务器配置
+          server-id: central
+          server-username: SONATYPE_USERNAME
+          server-password: SONATYPE_PASSWORD
 
-      # 核心步骤：将 GitHub Secret 中的私钥导入到 Runner 的 GPG 环境中
-      # 替换原有报错的 Import GPG Key 步骤
+      # 导入 GPG 密钥
       - name: Import GPG Key
         uses: crazy-max/ghaction-import-gpg@v6
         with:
@@ -31,9 +34,11 @@ jobs:
 
       # 执行部署命令
       - name: Publish to Maven Central
+        env:
+          # 🌟 关键优化 2：通过环境变量将 GitHub Secrets 映射给 setup-java
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         run: |
-          mvn clean install central-publishing:publish -B \
-            -DaltDeploymentRepository=central::default::https://central.sonatype.com/ \
-            -Dsonatype.username=${{ secrets.SONATYPE_USERNAME }} \
-            -Dsonatype.password=${{ secrets.SONATYPE_PASSWORD }} \
+          # 🌟 关键优化 3：回归最纯粹的 mvn deploy，干净、不冲突
+          mvn clean deploy -B \
             -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
