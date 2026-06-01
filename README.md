@@ -12,15 +12,21 @@
                 <version>1.0-SNAPSHOT</version>
                 <executions>
                     <execution>
-                        <phase>package</phase> <goals>
-                        <goal>build</goal>
-                    </goals>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <password>YourSecurePassword123!</password>
                     <!--可选* (空则使用环境变量)-->
                     <goPath>C:\dev\go\bin\go.exe</goPath>
+                    <sourceJar>
+                        ${project.build.directory}/${project.build.finalName}.jar
+                    </sourceJar>
+                    <targetJar>
+                        ${project.build.directory}/${project.build.finalName}-encrypted.jar
+                    </targetJar>
                     <includes>
                         <include>com/example/**/*.class</include>
                     </includes>
