@@ -1,6 +1,6 @@
 ## 说明
 
-本插件提供了 springboot3 的 xjar 加固能力, 目前未包含 jdk
+本插件提供了 springboot3 的 xjar 加固能力, 目前未包含 jdk md5 校验功能
 
 
 
