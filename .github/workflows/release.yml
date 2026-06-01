@@ -32,7 +32,7 @@ jobs:
       # 执行部署命令
       - name: Publish to Maven Central
         run: |
-          mvn clean deploy -B \
+          mvn clean install central-publishing:publish -B \
             -DaltDeploymentRepository=central::default::https://central.sonatype.com/ \
             -Dsonatype.username=${{ secrets.SONATYPE_USERNAME }} \
             -Dsonatype.password=${{ secrets.SONATYPE_PASSWORD }} \
