@@ -11,19 +11,13 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
+import java.util.UUID;
 
 @Mojo(name = "build", defaultPhase = LifecyclePhase.PACKAGE)
 public class XJarMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
-
-    /**
-     * 加密密码
-     */
-    @Parameter(property = "io.xjar.xjar.password", required = true)
-    private String password;
-
     /**
      * 需要加密的类的包名匹配规则（如：com.example.**.class）
      */
@@ -42,25 +36,52 @@ public class XJarMojo extends AbstractMojo {
     @Parameter(property = "xjar.goPath")
     private String goPath;
 
+    /**
+     * 指定输入 JAR（优先于 project artifact）
+     */
+    @Parameter(property = "xjar.sourceJar")
+    private File sourceJar;
+
+    /**
+     * 指定输出 JAR
+     */
+    @Parameter(property = "xjar.targetJar")
+    private File targetJar;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        // 1. 获取打包生成的原始 JAR 文件
-        File artifactFile = project.getArtifact().getFile();
-        if (artifactFile == null || !artifactFile.exists()) {
-            getLog().info("未找到生成的 JAR 包，跳过 XJar 加固。");
+        File inputJar;
+        // 1. 优先使用用户配置的 sourceJar
+        if (sourceJar != null) {
+            inputJar = sourceJar;
+            getLog().info("使用配置的 sourceJar: " + inputJar.getAbsolutePath());
+        } else {
+            inputJar = project.getArtifact().getFile();
+            if (inputJar != null) {
+                getLog().info("使用 Maven 构建产物: " + inputJar.getAbsolutePath());
+            }
+        }
+        // 2. 校验输入文件
+        if (inputJar == null || !inputJar.exists()) {
+            getLog().warn("未找到可用的 JAR 包，跳过 XJar 加固");
             return;
         }
-        String sourcePath = artifactFile.getAbsolutePath();
-        String targetPath = sourcePath.endsWith(".jar")
-                ? sourcePath.substring(0, sourcePath.length() - 4) + ".x.jar"
-                : sourcePath + ".x.jar";
-        getLog().info("正在对 JAR 包进行 XJar 加固: " + sourcePath);
+        String sourcePath = inputJar.getAbsolutePath();
+        // 3. 处理输出路径
+        String targetPath;
+        if (targetJar != null) {
+            targetPath = targetJar.getAbsolutePath();
+        } else {
+            targetPath = sourcePath.endsWith(".jar")
+                    ? sourcePath.substring(0, sourcePath.length() - 4) + ".x.jar"
+                    : sourcePath + ".x.jar";
+        }
 
+        getLog().info("正在对 JAR 包进行 XJar 加固: " + sourcePath);
         try {
             XEncryption xEncryption = XCryptos.encryption()
                     .from(sourcePath)  // 加密的源文件
-                    .use(password);
-
+                    .use(UUID.randomUUID().toString());
             for (String include : includes) {
                 xEncryption.include(include);
             }
