@@ -33,6 +33,7 @@ jobs:
       - name: Publish to Maven Central
         run: |
           mvn clean deploy -B \
+            -DaltDeploymentRepository=central::default::https://central.sonatype.com/ \
             -Dsonatype.username=${{ secrets.SONATYPE_USERNAME }} \
             -Dsonatype.password=${{ secrets.SONATYPE_PASSWORD }} \
             -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
