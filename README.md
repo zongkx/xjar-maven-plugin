@@ -9,7 +9,7 @@
             <plugin>
                 <groupId>com.zongkx</groupId>
                 <artifactId>xjar-maven-plugin</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.0</version>
                 <executions>
                     <execution>
                         <phase>install</phase>
